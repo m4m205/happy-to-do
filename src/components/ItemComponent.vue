@@ -27,7 +27,7 @@
   <div class="card p-2 mb-3 rounded-3">
     <div class="nav justify-content-end item-header">
       <i class="bi bi-check-circle-fill px-1" @click="saveClicked"></i>
-      <i class="bi bi-trash3-fill px-1 "></i>
+      <i class="bi bi-trash3-fill px-1" data-bs-toggle="modal" data-bs-target="#overlay-delete"></i>
       <i class="bi bi-truck px-1"></i>
       <i class="bi bi-info-circle px-1"></i>
     </div>

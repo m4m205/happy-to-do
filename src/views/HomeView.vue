@@ -7,6 +7,13 @@ const listsData = ref([]);
 const itemsData = ref([]);
 
 onMounted(() => {
+  var deleteModal = document.getElementById('overlay-delete')
+  var cancelDeleteBtn = document.getElementById('cancel-delete')
+
+  deleteModal.addEventListener('shown.bs.modal', function () {
+    cancelDeleteBtn.focus()
+  })
+
   NiveaubepalingAPI.getLists().then(
     (res) => {
       res.json().then(
@@ -52,6 +59,32 @@ const getListItems = (id) => {
 </svg>
 
  <!-- todo: change the above code place -->
+
+      <!-- <div id="overlay-delete" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="d-flex justify-content-center modal-body">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div> -->
+      <div id="overlay-delete" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this item?
+            </div>
+            <div class="modal-footer">
+              <button id="cancel-delete" type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+              <button type="button" class="btn btn-danger">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     <div class="alert alert-success d-flex align-items-center" role="alert">
       <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
       <div>
