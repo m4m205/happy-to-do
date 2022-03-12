@@ -24,4 +24,19 @@ export default class NiveaubepalingAPI {
         return fetch(`https://todo-api.niveaubepaling.nl/list/${id}`, fetchOptions)
             .then((res) => (!res.ok ? Promise.reject(res) : res));
     }
+
+    static addItem(id, payload) {
+        const fetchOptions = {
+            method: 'POST',
+            headers : {
+                Accept : 'application/json',
+                Origin: '*',
+                'Content-type': 'application/json'
+            },
+            
+            body: JSON.stringify(payload)
+        };
+        return fetch(`https://todo-api.niveaubepaling.nl/list/${id}`, fetchOptions)
+            .then((res) => (!res.ok ? Promise.reject(res) : res));
+    }
 }

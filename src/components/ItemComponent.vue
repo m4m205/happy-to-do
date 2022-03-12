@@ -43,7 +43,11 @@
       <div class="input-group-text">
         <input class="form-check-input mt-0" type="checkbox" value="" :checked="isItemCompleted" aria-label="Checkbox for following text input">
       </div>
-      <p class="form-control mb-0" @click="itemClicked">{{itemText}}</p>
+      <p class="form-control mb-0"
+          :class="{ 'text-decoration-line-through': isItemCompleted }"
+          @click="itemClicked">
+        {{itemText}}
+      </p>
     </div>
   </div>
 </template>

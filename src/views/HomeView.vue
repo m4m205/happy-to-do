@@ -5,21 +5,32 @@ import ItemComponent from "@/components/ItemComponent.vue";
 
 const listsData = ref([]);
 const itemsData = ref([]);
+const selectedListId = ref(null);
 
 onMounted(() => {
-  var deleteModal = document.getElementById('overlay-delete')
-  var cancelDeleteBtn = document.getElementById('cancel-delete')
+  const deleteModal = document.getElementById('overlay-delete')
+  const cancelDeleteBtn = document.getElementById('cancel-delete')
+  const newItemInput = document.getElementById('new-item-input')
+
+  newItemInput.addEventListener("keydown", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    addNewItem(event.target.value);
+  }
+});
 
   deleteModal.addEventListener('shown.bs.modal', function () {
     cancelDeleteBtn.focus()
   })
 
-  NiveaubepalingAPI.getLists().then(
-    (res) => {
+  NiveaubepalingAPI.getLists()
+  .then((res) => {
       res.json().then(
         (resList) => {
           if (resList.data?.length > 0) {            
             listsData.value = resList.data
+            selectedListId.value = resList.data[0].id
             getListItems(resList.data[0].id)
           }
         }
@@ -29,18 +40,35 @@ onMounted(() => {
 })
 
 const getListItems = (id) => {
-    NiveaubepalingAPI.getItems(id).then(
-    (res) => {
+    NiveaubepalingAPI.getItems(id)
+    .then((res) => {
       res.json().then(
         (resItems) => {
-          if (resItems.data?.items?.length > 0) {  
-            console.log();          
+          if (resItems.data?.items?.length > 0) {          
             itemsData.value = resItems.data.items            
           }
         }
       )
     } 
   )
+}
+
+const addNewItem = (item) => {
+  const newItem = {
+    name: item.trim()
+  };
+
+  NiveaubepalingAPI.addItem( selectedListId.value, newItem)
+    .then((res) => {
+      res.json().then(
+        () => {
+          document.getElementById('new-item-input').value = '';
+        }
+      ).catch((err) => {
+        console.log('i am here', err);
+
+      })
+    }) 
 }
 </script>
 
@@ -99,8 +127,13 @@ const getListItems = (id) => {
           <p class="p-2 mb-0">{{list.name}}</p>
         </div>
       </div>
-      <div v-if="itemsData.length > 0" class="col-8 p-3 gx-3 bg-success">
-        <ItemComponent v-for="item in itemsData" :key="item.id" :item-text="item.name" :is-item-completed="item.completed"></ItemComponent>
+      <div class="col-8 p-3 gx-3 bg-success">
+        <div class="input-group-text mb-3">
+          <input id="new-item-input" type="text" class="form-control" placeholder="Add to-do item here"/>
+        </div>
+        <div v-if="itemsData.length > 0">
+          <ItemComponent v-for="item in itemsData" :key="item.id" :item-text="item.name" :is-item-completed="item.completed"></ItemComponent>
+        </div>
       </div>
     </div>
   </main>
