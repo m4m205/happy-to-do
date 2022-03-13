@@ -170,7 +170,7 @@ function deleteItem() {
           v-for="list in listsData"
           :key="list.id"
           @click="getListItems(list.id)"
-          :class="{ 'bg-info': selectedListId === list.id }"
+          :class="{ 'border border-primary border-3': selectedListId === list.id }"
           class="card d-flex align-items-center justify-content-center text-center mb-2 list-card"
         >
           <p class="p-2 mb-0">{{ list.name }}</p>
