@@ -6,6 +6,7 @@ import ItemComponent from "@/components/ItemComponent.vue";
 const listsData = ref([])
 const itemsData = ref([])
 const selectedListId = ref(null)
+const itemToBeDeletedId = ref(null)
 let spinner = {};
 
 onMounted(() => {
@@ -58,24 +59,53 @@ const getListItems = (id) => {
   )
 }
 
-const addNewItem = (item) => {
-  const newItem = {
-    name: item.trim()
-  };
+  const addNewItem = (item) => {
+    const newItem = {
+      name: item.trim()
+    }
 
-  NiveaubepalingAPI.addItem( selectedListId.value, newItem)
-    .then((res) => {
-      res.json().then(
-        () => {
-          document.getElementById('new-item-input').value = ''
-          getListItems(selectedListId.value)           
-        }
-      ).catch((err) => {
-        console.log('i am here', err)
+    NiveaubepalingAPI.addItem( selectedListId.value, newItem)
+      .then((res) => {
+        res.json().then(
+          () => {
+            document.getElementById('new-item-input').value = ''
+            getListItems(selectedListId.value)           
+          }
+        ).catch((err) => {
+          // console.log('i am here', err)
 
-      })
-    }) 
-}
+        })
+      }) 
+  }
+
+  function updateItem(event) {
+    const updatedItem = {
+      completed: event.target.checked
+    }
+    NiveaubepalingAPI.updateItem( selectedListId.value, event.target.value, updatedItem)
+      .then((res) => {
+        res.json().then(
+          () => getListItems(selectedListId.value)
+        ).catch((err) => {
+          // console.log('i am here', err)
+        })
+      }) 
+  }
+    function prepareDeleteItem (payload) {
+      itemToBeDeletedId.value = payload
+    }
+
+    function deleteItem() {
+      console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiii' );
+    NiveaubepalingAPI.deleteItem( selectedListId.value, itemToBeDeletedId.value)
+      .then((res) => {
+        res.json().then(
+          () => getListItems(selectedListId.value)
+        ).catch((err) => {
+          // console.log('i am here', err)
+        })
+      }) 
+  }
 </script>
 
 <template>
@@ -107,14 +137,13 @@ const addNewItem = (item) => {
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="confirmModalLabel">Confirm</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               Are you sure you want to delete this item?
             </div>
             <div class="modal-footer">
-              <button id="cancel-delete" type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
-              <button type="button" class="btn btn-danger">Yes</button>
+              <button id="cancel-delete" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="()=> itemToBeDeletedId = null">No</button>
+              <button id="confirm-delete" type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="deleteItem">Yes</button>
             </div>
           </div>
         </div>
@@ -123,7 +152,7 @@ const addNewItem = (item) => {
     <div class="alert alert-success d-flex align-items-center" role="alert">
       <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
       <div>
-        a new item created successfully 
+        a new item created successfully
       </div>
     </div>
     <div class="row justify-content-between g-3">
@@ -139,7 +168,12 @@ const addNewItem = (item) => {
           <input id="new-item-input" type="text" class="form-control" placeholder="Add to-do item here"/>
         </div>
         <div v-if="itemsData.length > 0">
-          <ItemComponent v-for="item in itemsData.slice().reverse()" :key="item.id" :item-text="item.name" :is-item-completed="item.completed"></ItemComponent>
+          <ItemComponent v-for="item in itemsData.slice().reverse()" :key="item.id" 
+              :item-text="item.name" 
+              :is-item-completed="item.completed"
+              :item-id="item.id"
+              @delete="prepareDeleteItem"
+              @change="updateItem"></ItemComponent>
         </div>
       </div>
     </div>
