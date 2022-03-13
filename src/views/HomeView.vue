@@ -33,28 +33,26 @@ onMounted(() => {
     .then((res) => {
       res.json().then((resList) => {
         if (resList.data?.length > 0) {
-          listsData.value = resList.data;
-          selectedListId.value = resList.data[0].id;
-          getListItems(selectedListId.value);
+          listsData.value = resList.data
+          getListItems(resList.data[0].id)
         }
         setTimeout(() => {
           spinner.hide();
-        }, 250);
+        }, 500);
       });
     })
-    .catch(() => router.push({ name: "error" }));
+    .catch(() => router.push({ name: "error" }))
 });
 
 const getListItems = (id) => {
   NiveaubepalingAPI.getItems(id)
     .then((res) => {
       res.json().then((resItems) => {
-        if (resItems.data?.items?.length > 0) {
-          itemsData.value = resItems.data.items;
-        }
+        selectedListId.value = id
+        itemsData.value = resItems.data.items;
       });
     })
-    .catch(() => router.push({ name: "error" }));
+    .catch(() => router.push({ name: "error" }))
 };
 
 const addNewItem = (item) => {
@@ -73,7 +71,12 @@ const addNewItem = (item) => {
   });
 };
 
-function updateItem(event) {
+function updateItem(event, origin) {
+  console.log( 'xxxxxxxxxxxxx');
+  if (origin === 'input') {
+    console.log(event, 'eeeeeeeeeeee');
+    return
+  }
   const updatedItem = {
     completed: event.target.checked,
   };
@@ -162,17 +165,18 @@ function deleteItem() {
       </div>
     </div>
     <div class="row justify-content-between g-3">
-      <div class="col-3 p-3 gx-3 shadow">
+      <div class="col-12 col-md-3 p-3 gx-2 shadow">
         <div
           v-for="list in listsData"
           :key="list.id"
           @click="getListItems(list.id)"
+          :class="{ 'bg-info': selectedListId === list.id }"
           class="card d-flex align-items-center justify-content-center text-center mb-2 list-card"
         >
           <p class="p-2 mb-0">{{ list.name }}</p>
         </div>
       </div>
-      <div class="col-8 p-3 gx-3 shadow">
+      <div class="col-12 col-md-8 p-3 gx-2 shadow">
         <div class="input-group-text shadow-sm mb-3">
           <input
             id="new-item-input"
@@ -191,6 +195,9 @@ function deleteItem() {
             @delete="prepareDeleteItem"
             @change="updateItem"
           ></ItemComponent>
+        </div>
+        <div v-else class="text-center">
+          <p>Empty list!</p>
         </div>
       </div>
     </div>

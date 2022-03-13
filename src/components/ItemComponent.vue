@@ -1,7 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue"
 
-const hasFocus = ref(false);
 const props = defineProps({
   itemText: String,
   isItemCompleted: Boolean,
@@ -10,15 +9,19 @@ const props = defineProps({
 
 const emit = defineEmits(["update", "delete"]);
 
-const itemClicked = () => {
-  hasFocus.value = true;
-  setTimeout(() => {
-    document.getElementById("item-text-input").focus();
-  }, 0);
-};
+onMounted(() => {
+  const itemInput = document.getElementById('item-text-input');
+
+  itemInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      updateItem(event.target.value, 'input');
+    }
+  });
+})
 
 const saveClicked = () => {
-  hasFocus.value = false;
+  
 };
 </script>
 
@@ -38,26 +41,7 @@ const saveClicked = () => {
       <i class="bi bi-info-circle text-info px-1"></i>
     </div>
 
-    <div v-if="hasFocus" class="input-group">
-      <div class="input-group-text">
-        <input
-          class="form-check-input mt-0"
-          type="checkbox"
-          value=""
-          :checked="isItemCompleted"
-          aria-label="Checkbox for following text input"
-        />
-      </div>
-      <input
-        id="item-text-input"
-        v-model="itemText"
-        type="text"
-        class="form-control"
-        aria-label="Text input with checkbox"
-      />
-    </div>
-
-    <div v-else class="input-group">
+    <div v-if="true" class="input-group">
       <div class="input-group-text">
         <input
           class="form-check-input mt-0"
@@ -68,13 +52,15 @@ const saveClicked = () => {
           v-model="isItemCompleted"
         />
       </div>
-      <p
-        class="form-control mb-0"
+      <input
+        id="item-text-input"
         :class="{ 'text-decoration-line-through': isItemCompleted }"
-        @click="itemClicked"
-      >
-        {{ itemText }}
-      </p>
+        v-model="itemText"
+        @change="$emit('delete', 'input')"
+        type="text"
+        class="form-control"
+        aria-label="Text input with checkbox"
+      />
     </div>
   </div>
 </template>
