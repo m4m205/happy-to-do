@@ -4,19 +4,19 @@ import router from "@/router"
 import NiveaubepalingAPI from "@/services/niveaubepalingAPI.js"
 import ItemComponent from "@/components/ItemComponent.vue"
 
-const listsData = ref([]);
-const itemsData = ref([]);
-const selectedListId = ref(null);
-const itemToBeDeletedId = ref(null);
+const listsData = ref([])
+const itemsData = ref([])
+const selectedListId = ref(null)
+const itemToBeDeletedId = ref(null)
 let spinner = {};
 
 onMounted(() => {
   spinner = new bootstrap.Modal(document.getElementById("spinner-overlay"), {
     keyboard: false,
   });
-  const deleteModal = document.getElementById("delete-overlay");
-  const cancelDeleteBtn = document.getElementById("cancel-delete");
-  const newItemInput = document.getElementById("new-item-input");
+  const deleteModal = document.getElementById("delete-overlay")
+  const cancelDeleteBtn = document.getElementById("cancel-delete")
+  const newItemInput = document.getElementById("new-item-input")
 
   newItemInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
@@ -28,6 +28,10 @@ onMounted(() => {
   deleteModal.addEventListener("shown.bs.modal", function () {
     cancelDeleteBtn.focus();
   });
+  getLists()
+});
+
+function getLists () {
   spinner.show();
   NiveaubepalingAPI.getLists()
     .then((res) => {
@@ -39,10 +43,10 @@ onMounted(() => {
         setTimeout(() => {
           spinner.hide();
         }, 500);
-      });
+      })
     })
     .catch(() => router.push({ name: "error" }))
-});
+}
 
 const getListItems = (id) => {
   NiveaubepalingAPI.getItems(id)
@@ -64,31 +68,37 @@ const addNewItem = (item) => {
     res
       .json()
       .then(() => {
-        document.getElementById("new-item-input").value = "";
+        document.getElementById("new-item-input").value = ""
         getListItems(selectedListId.value);
       })
-      .catch(() => router.push({ name: "error" }));
+      .catch(() => router.push({ name: "error" }))
   });
-};
+}
 
-function updateItem(event, origin) {
-  console.log( 'xxxxxxxxxxxxx');
-  if (origin === 'input') {
-    console.log(event, 'eeeeeeeeeeee');
-    return
-  }
+function prepareUpdateItemCompleted (id, newValue) {
   const updatedItem = {
-    completed: event.target.checked,
+    completed: newValue,
   };
+  updateItem (id, updatedItem)
+}
+
+function prepareUpdateItemText (id, newValue) {
+  const updatedItem = {
+    name: newValue,
+  }
+  updateItem (id, updatedItem)
+}
+
+function updateItem(id, object) {
   NiveaubepalingAPI.updateItem(
     selectedListId.value,
-    event.target.value,
-    updatedItem
+    id,
+    object
   ).then((res) => {
     res
       .json()
       .then(() => getListItems(selectedListId.value))
-      .catch(() => router.push({ name: "error" }));
+      .catch(() => router.push({ name: "error" }))
   });
 }
 function prepareDeleteItem(payload) {
@@ -104,8 +114,15 @@ function deleteItem() {
     res
       .json()
       .then(() => getListItems(selectedListId.value))
-      .catch(() => router.push({ name: "error" }));
+      .catch(() => router.push({ name: "error" }))
   });
+}
+
+function deleteList() {
+  NiveaubepalingAPI.deleteList(
+    selectedListId.value
+  ).then(() => getLists()
+  ).catch(() => router.push({ name: "error" }))
 }
 </script>
 
@@ -173,7 +190,12 @@ function deleteItem() {
           :class="{ 'border border-primary border-3': selectedListId === list.id }"
           class="card d-flex align-items-center justify-content-center text-center mb-2 list-card"
         >
-          <p class="p-2 mb-0">{{ list.name }}</p>
+          <p class="p-2 mb-0">
+            {{ list.name }}      
+            <i
+              class="bi bi-trash3-fill text-danger px-1"
+              @click.stop="deleteList"
+            ></i></p>
         </div>
       </div>
       <div class="col-12 col-md-8 p-3 gx-2 shadow">
@@ -193,7 +215,8 @@ function deleteItem() {
             :is-item-completed="item.completed"
             :item-id="item.id"
             @delete="prepareDeleteItem"
-            @change="updateItem"
+            @inputChange="prepareUpdateItemText"
+            @CompletedChange="prepareUpdateItemCompleted"
           ></ItemComponent>
         </div>
         <div v-else class="text-center">

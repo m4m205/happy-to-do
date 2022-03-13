@@ -74,4 +74,19 @@ export default class NiveaubepalingAPI {
       fetchOptions
     ).then((res) => (!res.ok ? Promise.reject(res) : res));
   }
+
+  static deleteList(listId) {
+    const fetchOptions = {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        Origin: "*",
+        "Content-type": "application/json",
+      },
+    };
+    return fetch(
+      `https://todo-api.niveaubepaling.nl/list/${listId}`,
+      fetchOptions
+    ).then((res) => (!res.ok ? Promise.reject(res) : res));
+  }
 }
