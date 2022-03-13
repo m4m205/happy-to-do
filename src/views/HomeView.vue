@@ -3,27 +3,29 @@ import { ref, onMounted } from 'vue'
 import NiveaubepalingAPI from "@/services/niveaubepalingAPI.js";
 import ItemComponent from "@/components/ItemComponent.vue";
 
-const listsData = ref([]);
-const itemsData = ref([]);
-const selectedListId = ref(null);
+const listsData = ref([])
+const itemsData = ref([])
+const selectedListId = ref(null)
+let spinner = {};
 
 onMounted(() => {
-  const deleteModal = document.getElementById('overlay-delete')
+  spinner = new bootstrap.Modal(document.getElementById('spinner-overlay'), { keyboard: false })
+  const deleteModal = document.getElementById('delete-overlay')
   const cancelDeleteBtn = document.getElementById('cancel-delete')
   const newItemInput = document.getElementById('new-item-input')
 
+
   newItemInput.addEventListener("keydown", function(event) {
-  // Number 13 is the "Enter" key on the keyboard
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    addNewItem(event.target.value);
-  }
-});
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      addNewItem(event.target.value);
+    }
+  });
 
   deleteModal.addEventListener('shown.bs.modal', function () {
     cancelDeleteBtn.focus()
   })
-
+  spinner.show()
   NiveaubepalingAPI.getLists()
   .then((res) => {
       res.json().then(
@@ -33,10 +35,13 @@ onMounted(() => {
             selectedListId.value = resList.data[0].id
             getListItems(resList.data[0].id)
           }
+          setTimeout(() => {
+                spinner.hide()
+              }, 250) 
         }
       )
     } 
-  )
+  ).catch()
 })
 
 const getListItems = (id) => {
@@ -45,7 +50,7 @@ const getListItems = (id) => {
       res.json().then(
         (resItems) => {
           if (resItems.data?.items?.length > 0) {          
-            itemsData.value = resItems.data.items            
+            itemsData.value = resItems.data.items
           }
         }
       )
@@ -62,10 +67,11 @@ const addNewItem = (item) => {
     .then((res) => {
       res.json().then(
         () => {
-          document.getElementById('new-item-input').value = '';
+          document.getElementById('new-item-input').value = ''
+          getListItems(selectedListId.value)           
         }
       ).catch((err) => {
-        console.log('i am here', err);
+        console.log('i am here', err)
 
       })
     }) 
@@ -73,7 +79,7 @@ const addNewItem = (item) => {
 </script>
 
 <template>
-  <main class="container bg-info p-5">
+  <main class="container shadow-sm p-5">
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
@@ -88,18 +94,19 @@ const addNewItem = (item) => {
 
  <!-- todo: change the above code place -->
 
-      <!-- <div id="overlay-delete" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="d-flex justify-content-center modal-body">
+      <div id="spinner-overlay" class="modal" tabindex="-1" aria-labelledby="spinnerModalLabel" aria-hidden="true">
+        <div class="d-flex align-items-center justify-content-center h-100 modal-dialog">
           <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden" id="spinnerModalLabel">Loading...</span>
           </div>
         </div>
-      </div> -->
-      <div id="overlay-delete" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      </div>
+
+      <div id="delete-overlay" class="modal fade" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+              <h5 class="modal-title" id="confirmModalLabel">Confirm</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -120,19 +127,19 @@ const addNewItem = (item) => {
       </div>
     </div>
     <div class="row justify-content-between g-3">
-      <div class="col-3 p-3 gx-3 bg-secondary">
+      <div class="col-3 p-3 gx-3 shadow">
         <div v-for="list in listsData" :key="list.id"
              @click="getListItems(list.id)"
              class="card d-flex align-items-center justify-content-center text-center mb-2 list-card">
           <p class="p-2 mb-0">{{list.name}}</p>
         </div>
       </div>
-      <div class="col-8 p-3 gx-3 bg-success">
-        <div class="input-group-text mb-3">
+      <div class="col-8 p-3 gx-3 shadow">
+        <div class="input-group-text shadow-sm mb-3">
           <input id="new-item-input" type="text" class="form-control" placeholder="Add to-do item here"/>
         </div>
         <div v-if="itemsData.length > 0">
-          <ItemComponent v-for="item in itemsData" :key="item.id" :item-text="item.name" :is-item-completed="item.completed"></ItemComponent>
+          <ItemComponent v-for="item in itemsData.slice().reverse()" :key="item.id" :item-text="item.name" :is-item-completed="item.completed"></ItemComponent>
         </div>
       </div>
     </div>

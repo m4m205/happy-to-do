@@ -4,14 +4,24 @@ import { RouterLink, RouterView } from "vue-router";
 
 <template>
   <div class="d-flex flex-column min-vh-100">
-    <header class="mt-2">
-      <div class="mt-2">
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/about">About</RouterLink>
-        </nav>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Happy to-do</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <RouterLink class="nav-link active" aria-current="page" to="/">Home meee</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link active" aria-current="page" to="/about">About</RouterLink>
+            </li>
+          </ul>
+        </div>
       </div>
-    </header>
+    </nav>
     <div class="container">
       <RouterView />
     </div>
@@ -23,13 +33,8 @@ import { RouterLink, RouterView } from "vue-router";
 
 <style>
 @import "@/assets/base.css";
-header {
-  height: 2rem;
-
-}
 
 footer{
-  /* background-color: aquamarine; */
   height: 1.75rem;
 }
 
