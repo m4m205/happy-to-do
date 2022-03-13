@@ -13,7 +13,7 @@ import { RouterLink, RouterView } from "vue-router";
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
             <li class="nav-item">
-              <RouterLink class="nav-link active" aria-current="page" to="/">Home meee</RouterLink>
+              <RouterLink class="nav-link active" aria-current="page" to="/">Home</RouterLink>
             </li>
             <li class="nav-item">
               <RouterLink class="nav-link active" aria-current="page" to="/about">About</RouterLink>
