@@ -17,11 +17,19 @@ onMounted(() => {
   const deleteModal = document.getElementById("delete-overlay")
   const cancelDeleteBtn = document.getElementById("cancel-delete")
   const newItemInput = document.getElementById("new-item-input")
+  const newListInput = document.getElementById("new-list-input")
 
   newItemInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
       addNewItem(event.target.value);
+    }
+  });
+
+    newListInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addNewList(event.target.value);
     }
   });
 
@@ -31,15 +39,13 @@ onMounted(() => {
   getLists()
 });
 
-function getLists () {
+function getLists (selectedId) {
   spinner.show();
   NiveaubepalingAPI.getLists()
     .then((res) => {
       res.json().then((resList) => {
-        if (resList.data?.length > 0) {
-          listsData.value = resList.data
-          getListItems(resList.data[0].id)
-        }
+        listsData.value = resList.data
+        selectedId ? getListItems(selectedId) : getListItems(resList.data[0].id)
         setTimeout(() => {
           spinner.hide();
         }, 500);
@@ -70,6 +76,22 @@ const addNewItem = (item) => {
       .then(() => {
         document.getElementById("new-item-input").value = ""
         getListItems(selectedListId.value);
+      })
+      .catch(() => router.push({ name: "error" }))
+  });
+}
+
+const addNewList = (list) => {
+  const newList = {
+    name: list.trim(),
+  };
+
+  NiveaubepalingAPI.addList(newList).then((res) => {
+    res
+      .json()
+      .then((res) => {
+        document.getElementById("new-list-input").value = ""
+        getLists(res.data.id);
       })
       .catch(() => router.push({ name: "error" }))
   });
@@ -183,8 +205,16 @@ function deleteList() {
     </div>
     <div class="row justify-content-between g-3">
       <div class="col-12 col-md-3 p-3 gx-2 shadow">
+        <div class="input-group-text shadow-sm mb-3">
+          <input
+            id="new-list-input"
+            type="text"
+            class="form-control"
+            placeholder="create new list here"
+          />
+        </div>
         <div
-          v-for="list in listsData"
+          v-for="list in listsData.slice().reverse()"
           :key="list.id"
           @click="getListItems(list.id)"
           :class="{ 'border border-primary border-3': selectedListId === list.id }"
