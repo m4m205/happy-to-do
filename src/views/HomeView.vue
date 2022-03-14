@@ -54,7 +54,7 @@ function getLists (selectedId) {
     .catch(() => router.push({ name: "error" }))
 }
 
-const getListItems = (id) => {
+function getListItems (id) {
   NiveaubepalingAPI.getItems(id)
     .then((res) => {
       res.json().then((resItems) => {
@@ -65,7 +65,7 @@ const getListItems = (id) => {
     .catch(() => router.push({ name: "error" }))
 };
 
-const addNewItem = (item) => {
+function addNewItem (item) {
   const newItem = {
     name: item.trim(),
   };
@@ -81,7 +81,7 @@ const addNewItem = (item) => {
   });
 }
 
-const addNewList = (list) => {
+function addNewList (list) {
   const newList = {
     name: list.trim(),
   };
@@ -246,7 +246,7 @@ function deleteList(id) {
             :item-id="item.id"
             @delete="prepareDeleteItem"
             @inputChange="prepareUpdateItemText"
-            @CompletedChange="prepareUpdateItemCompleted"
+            @completedChange="prepareUpdateItemCompleted"
           ></ItemComponent>
         </div>
         <div v-else class="text-center">

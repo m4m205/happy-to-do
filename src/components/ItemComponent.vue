@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { onMounted } from "vue"
 
 const props = defineProps({
   itemText: String,
@@ -7,7 +7,7 @@ const props = defineProps({
   itemId: Number,
 });
 
-const emit = defineEmits(["update", "delete"]);
+const emit = defineEmits(['delete', 'completedChange', 'inputChange']);
 
 onMounted(() => {
   const itemInput = document.getElementById('item-text-input');
@@ -19,6 +19,13 @@ onMounted(() => {
     }
   });
 })
+
+// async function emitCheckBoxEvent (itemId, isItemCompleted) {
+//   // wait time needed here to insure isItemCompleted value was updated
+//   await nextTick()
+//   emit( 'completedChange', itemId, isItemCompleted)
+// }
+
 </script>
 
 <template>
@@ -44,7 +51,7 @@ onMounted(() => {
           aria-label="Checkbox for following text input"
           :checked="isItemCompleted"
           v-model="isItemCompleted"
-          @change="$emit( 'CompletedChange', itemId, isItemCompleted)"
+          @change="$emit( 'completedChange', itemId, isItemCompleted)"
         />
       </div>
       <input
