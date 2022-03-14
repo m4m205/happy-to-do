@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from "vue"
+import { onMounted, nextTick } from "vue"
 
 const props = defineProps({
   itemText: String,
@@ -20,11 +20,11 @@ onMounted(() => {
   });
 })
 
-// async function emitCheckBoxEvent (itemId, isItemCompleted) {
-//   // wait time needed here to insure isItemCompleted value was updated
-//   await nextTick()
-//   emit( 'completedChange', itemId, isItemCompleted)
-// }
+async function emitCheckBoxEvent (itemId, isItemCompleted) {
+  // wait time needed here to insure isItemCompleted value was updated
+  await nextTick()
+  emit( 'completedChange', itemId, isItemCompleted)
+}
 
 </script>
 
@@ -38,7 +38,7 @@ onMounted(() => {
         class="bi bi-trash3-fill text-danger px-1"
         @click="$emit('delete', itemId)"
         data-bs-toggle="modal"
-        data-bs-target="#delete-overlay"
+        data-bs-target="#delete-item-overlay"
       ></i>
       <i class="bi bi-info-circle text-info px-1"></i>
     </div>
@@ -51,7 +51,7 @@ onMounted(() => {
           aria-label="Checkbox for following text input"
           :checked="isItemCompleted"
           v-model="isItemCompleted"
-          @change="$emit( 'completedChange', itemId, isItemCompleted)"
+          @change="emitCheckBoxEvent(itemId, isItemCompleted)"
         />
       </div>
       <input

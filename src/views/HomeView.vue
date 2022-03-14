@@ -8,14 +8,17 @@ const listsData = ref([])
 const itemsData = ref([])
 const selectedListId = ref(null)
 const itemToBeDeletedId = ref(null)
+const listToBeDeletedId = ref(null)
 let spinner = {};
 
 onMounted(() => {
   spinner = new bootstrap.Modal(document.getElementById("spinner-overlay"), {
     keyboard: false,
   });
-  const deleteModal = document.getElementById("delete-overlay")
-  const cancelDeleteBtn = document.getElementById("cancel-delete")
+  const deleteItemModal = document.getElementById("delete-item-overlay")
+  const deleteListModal = document.getElementById("delete-list-overlay")
+  const cancelDeleteItemBtn = document.getElementById("cancel-delete-item")
+  const cancelDeleteListBtn = document.getElementById("cancel-delete-list")
   const newItemInput = document.getElementById("new-item-input")
   const newListInput = document.getElementById("new-list-input")
 
@@ -26,16 +29,20 @@ onMounted(() => {
     }
   });
 
-    newListInput.addEventListener("keydown", function (event) {
+  newListInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
       addNewList(event.target.value);
     }
   });
 
-  deleteModal.addEventListener("shown.bs.modal", function () {
-    cancelDeleteBtn.focus();
+  deleteItemModal.addEventListener("shown.bs.modal", function () {
+    cancelDeleteItemBtn.focus();
   });
+
+  deleteListModal.addEventListener("shown.bs.modal", function () {
+    cancelDeleteListBtn.focus();
+  });  
   getLists()
 });
 
@@ -123,6 +130,7 @@ function updateItem(id, object) {
       .catch(() => router.push({ name: "error" }))
   });
 }
+
 function prepareDeleteItem(payload) {
   itemToBeDeletedId.value = payload;
 }
@@ -135,15 +143,26 @@ function deleteItem() {
   ).then((res) => {
     res
       .json()
-      .then(() => getListItems(selectedListId.value))
+      .then(() => {
+        itemToBeDeletedId.value = null
+        getListItems(selectedListId.value)
+      })
       .catch(() => router.push({ name: "error" }))
   });
 }
 
-function deleteList(id) {
+function prepareDeleteList(payload) {
+  listToBeDeletedId.value = payload;
+}
+
+function deleteList() {
+  if (listToBeDeletedId.value === null) return;
   NiveaubepalingAPI.deleteList(
-    id
-  ).then(() => getLists()
+    listToBeDeletedId.value
+  ).then(() => {
+    listToBeDeletedId.value = null
+    getLists()
+  }
   ).catch(() => router.push({ name: "error" }))
 }
 </script>
@@ -166,7 +185,7 @@ function deleteList(id) {
       </div>
     </div>
     <div
-      id="delete-overlay"
+      id="delete-item-overlay"
       class="modal fade"
       tabindex="-1"
       aria-labelledby="confirmModalLabel"
@@ -182,7 +201,7 @@ function deleteList(id) {
           </div>
           <div class="modal-footer">
             <button
-              id="cancel-delete"
+              id="cancel-delete-item"
               type="button"
               class="btn btn-primary"
               data-bs-dismiss="modal"
@@ -191,11 +210,49 @@ function deleteList(id) {
               No
             </button>
             <button
-              id="confirm-delete"
+              id="confirm-delete-item"
               type="button"
               class="btn btn-danger"
               data-bs-dismiss="modal"
               @click="deleteItem"
+            >
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="delete-list-overlay"
+      class="modal fade"
+      tabindex="-1"
+      aria-labelledby="confirmModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">Confirm</h5>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this list?
+          </div>
+          <div class="modal-footer">
+            <button
+              id="cancel-delete-list"
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              @click="() => (listToBeDeletedId = null)"
+            >
+              No
+            </button>
+            <button
+              id="confirm-delete-list"
+              type="button"
+              class="btn btn-danger"
+              data-bs-dismiss="modal"
+              @click="deleteList"
             >
               Yes
             </button>
@@ -210,7 +267,7 @@ function deleteList(id) {
             id="new-list-input"
             type="text"
             class="form-control"
-            placeholder="create new list here"
+            placeholder="create list"
           />
         </div>
         <div
@@ -218,14 +275,21 @@ function deleteList(id) {
           :key="list.id"
           @click="getListItems(list.id)"
           :class="{ 'border border-primary border-3': selectedListId === list.id }"
-          class="card d-flex align-items-center justify-content-center text-center mb-2 list-card"
+          class="card d-flex justify-content-center text-center p-2 mb-3 rounded-3 list-card"
         >
-          <p class="p-2 mb-0">
-            {{ list.name }}      
+          <div class="nav justify-content-end list-header">
             <i
               class="bi bi-trash3-fill text-danger px-1"
-              @click.stop="deleteList(list.id)"
-            ></i></p>
+              @click.stop="prepareDeleteList(list.id)"
+              data-bs-toggle="modal"
+              data-bs-target="#delete-list-overlay"
+            ></i>
+            <i class="bi bi-info-circle text-info px-1"></i>
+          </div>
+
+          <div class="input-group">
+          <p class="form-control mb-0">{{ list.name }}</p>
+          </div>
         </div>
       </div>
       <div class="col-12 col-md-8 p-3 gx-2 shadow">
@@ -258,10 +322,10 @@ function deleteList(id) {
 </template>
 
 <style scoped>
-.list-card {
-  min-height: 2rem;
-}
 .list-card:hover {
   cursor: pointer;
+}
+.list-header {
+  height: 1.5rem;
 }
 </style>
