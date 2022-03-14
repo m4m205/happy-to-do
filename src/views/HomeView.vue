@@ -261,7 +261,7 @@ function deleteList() {
       </div>
     </div>
     <div class="row justify-content-between g-3">
-      <div class="col-12 col-md-3 p-3 gx-2 shadow">
+      <div class="col-12 col-md-3 p-3 gx-2 bg-light shadow">
         <div class="input-group-text shadow-sm mb-3">
           <input
             id="new-list-input"
@@ -274,8 +274,8 @@ function deleteList() {
           v-for="list in listsData"
           :key="list.id"
           @click="getListItems(list.id)"
-          :class="{ 'border border-primary border-3': selectedListId === list.id }"
-          class="card d-flex justify-content-center text-center p-2 mb-3 rounded-3 list-card"
+          :class="{ 'border border-primary border-2': selectedListId === list.id }"
+          class="card d-flex justify-content-center text-center p-2 mb-3 list-card"
         >
           <div class="nav justify-content-end list-header">
             <i
@@ -292,7 +292,7 @@ function deleteList() {
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-8 p-3 gx-2 shadow">
+      <div class="col-12 col-md-8 p-3 gx-2 shadow-lg">
         <div class="input-group-text shadow-sm mb-3">
           <input
             id="new-item-input"

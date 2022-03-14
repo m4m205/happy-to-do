@@ -14,8 +14,7 @@ onMounted(() => {
 
   itemInput.addEventListener('keydown', function (event) {
     if (event.key === 'Enter') {
-      event.preventDefault();
-      updateItem(event.target.value, 'input');
+      itemInput.blur()
     }
   });
 })
@@ -50,7 +49,7 @@ async function emitCheckBoxEvent (itemId, isItemCompleted) {
           type="checkbox"
           aria-label="Checkbox for following text input"
           :checked="isItemCompleted"
-          v-model="isItemCompleted"
+          v-model="isItemCompleted"         
           @change="emitCheckBoxEvent(itemId, isItemCompleted)"
         />
       </div>
