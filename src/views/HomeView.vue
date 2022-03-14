@@ -140,9 +140,9 @@ function deleteItem() {
   });
 }
 
-function deleteList() {
+function deleteList(id) {
   NiveaubepalingAPI.deleteList(
-    selectedListId.value
+    id
   ).then(() => getLists()
   ).catch(() => router.push({ name: "error" }))
 }
@@ -214,7 +214,7 @@ function deleteList() {
           />
         </div>
         <div
-          v-for="list in listsData.slice().reverse()"
+          v-for="list in listsData"
           :key="list.id"
           @click="getListItems(list.id)"
           :class="{ 'border border-primary border-3': selectedListId === list.id }"
@@ -224,7 +224,7 @@ function deleteList() {
             {{ list.name }}      
             <i
               class="bi bi-trash3-fill text-danger px-1"
-              @click.stop="deleteList"
+              @click.stop="deleteList(list.id)"
             ></i></p>
         </div>
       </div>
