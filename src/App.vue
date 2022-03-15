@@ -5,8 +5,7 @@ import { RouterLink, RouterView } from "vue-router";
 <template>
   <div class="d-flex flex-column min-vh-100">
     <nav
-      class="navbar navbar-expand-md navbar-light"
-      style="background-color: #e3f2fd"
+      class="navbar navbar-expand-md navbar-light navbar-to-do"
     >
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Happy to-do</a>
@@ -52,7 +51,9 @@ import { RouterLink, RouterView } from "vue-router";
 </template>
 
 <style>
-@import "@/assets/base.css";
+.navbar-to-do {
+  background-color: #e3f2fd;
+}
 
 footer {
   height: 1.75rem;

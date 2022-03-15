@@ -107,14 +107,16 @@ function addNewList(list) {
   });
 }
 
-function prepareUpdateItemCompleted(id, newValue) {
+function prepareUpdateItemCompleted(newValue, id) {
+  console.log(id);
+  console.log(newValue);
   const updatedItem = {
     completed: newValue,
   };
   updateItem(id, updatedItem);
 }
 
-function prepareUpdateItemText(id, newValue) {
+function prepareUpdateItemText(newValue, id) {
   const updatedItem = {
     name: newValue,
   };
@@ -130,8 +132,8 @@ function updateItem(id, object) {
   });
 }
 
-function prepareDeleteItem(payload) {
-  itemToBeDeletedId.value = payload;
+function prepareDeleteItem(id) {
+  itemToBeDeletedId.value = id;
 }
 
 function deleteItem() {
@@ -307,12 +309,11 @@ function deleteList() {
           <ItemComponent
             v-for="item in itemsData.slice().reverse()"
             :key="item.id"
-            :item-text="item.name"
-            :is-item-completed="item.completed"
-            :item-id="item.id"
-            @delete="prepareDeleteItem"
-            @inputChange="prepareUpdateItemText"
-            @completedChange="prepareUpdateItemCompleted"
+            :input-value="item.name"
+            :item-completed="item.completed"
+            @delete="() => prepareDeleteItem(item.id)"
+            @inputValue="(e) => prepareUpdateItemText(e, item.id)"  
+            @update:itemCompleted="(e) => prepareUpdateItemCompleted(e, item.id)"
           ></ItemComponent>
         </div>
         <div v-else class="text-center">

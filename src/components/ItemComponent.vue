@@ -1,28 +1,34 @@
-<script setup>
-import { onMounted, nextTick } from "vue";
+<script>
+import { onMounted } from "vue";
+import useModelWrapper from "../utils/modelWrapper"
 
-const props = defineProps({
-  itemText: String,
-  isItemCompleted: Boolean,
-  itemId: Number,
-});
+// const emit = defineEmits(["delete", "completedChange", "inputChange"]);
 
-const emit = defineEmits(["delete", "completedChange", "inputChange"]);
+// async function emitCheckBoxEvent(itemId, isItemCompleted) {
+//   // wait time needed here to insure isItemCompleted value was updated
+//   await nextTick();
+//   emit("completedChange", itemId, isItemCompleted);
+// }
+export default { 
+  props: { 
+    inputValue: String, 
+    itemCompleted: Boolean
+  },
+  setup(props, { emit }) { 
+    onMounted(() => {
+      const itemInput = document.getElementById("item-text-input");
 
-onMounted(() => {
-  const itemInput = document.getElementById("item-text-input");
-
-  itemInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      itemInput.blur();
+      itemInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          itemInput.blur();
+        }
+      });
+    });
+    return { 
+      itemText: useModelWrapper(props, emit, 'inputValue'), 
+      isItemCompleted: useModelWrapper(props, emit, 'itemCompleted')
     }
-  });
-});
-
-async function emitCheckBoxEvent(itemId, isItemCompleted) {
-  // wait time needed here to insure isItemCompleted value was updated
-  await nextTick();
-  emit("completedChange", itemId, isItemCompleted);
+  },
 }
 </script>
 
@@ -32,7 +38,7 @@ async function emitCheckBoxEvent(itemId, isItemCompleted) {
       <i class="bi bi-check-circle-fill text-success px-1"></i>
       <i
         class="bi bi-trash3-fill text-danger px-1"
-        @click="$emit('delete', itemId)"
+        @click="$emit('delete')"
         data-bs-toggle="modal"
         data-bs-target="#delete-item-overlay"
       ></i>
@@ -46,15 +52,14 @@ async function emitCheckBoxEvent(itemId, isItemCompleted) {
           type="checkbox"
           aria-label="Checkbox for following text input"
           :checked="isItemCompleted"
-          v-model="isItemCompleted"
-          @change="emitCheckBoxEvent(itemId, isItemCompleted)"
+          @change="(e) => $emit('update:itemCompleted', e.target.checked)"
         />
       </div>
       <input
         id="item-text-input"
         :class="{ 'text-decoration-line-through': isItemCompleted }"
-        v-model="itemText"
-        @change="$emit('inputChange', itemId, itemText)"
+        :value="itemText"
+        @change="(e) => $emit('inputValue', e.target.value)"
         type="text"
         class="form-control"
         aria-label="Text input with checkbox"
