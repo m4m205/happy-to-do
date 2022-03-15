@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, nextTick } from "vue"
+import { onMounted, nextTick } from "vue";
 
 const props = defineProps({
   itemText: String,
@@ -7,32 +7,29 @@ const props = defineProps({
   itemId: Number,
 });
 
-const emit = defineEmits(['delete', 'completedChange', 'inputChange']);
+const emit = defineEmits(["delete", "completedChange", "inputChange"]);
 
 onMounted(() => {
-  const itemInput = document.getElementById('item-text-input');
+  const itemInput = document.getElementById("item-text-input");
 
-  itemInput.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') {
-      itemInput.blur()
+  itemInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      itemInput.blur();
     }
   });
-})
+});
 
-async function emitCheckBoxEvent (itemId, isItemCompleted) {
+async function emitCheckBoxEvent(itemId, isItemCompleted) {
   // wait time needed here to insure isItemCompleted value was updated
-  await nextTick()
-  emit( 'completedChange', itemId, isItemCompleted)
+  await nextTick();
+  emit("completedChange", itemId, isItemCompleted);
 }
-
 </script>
 
 <template>
   <div class="card p-2 mb-3 rounded-3">
     <div class="nav justify-content-end item-header">
-      <i
-        class="bi bi-check-circle-fill text-success px-1"
-      ></i>
+      <i class="bi bi-check-circle-fill text-success px-1"></i>
       <i
         class="bi bi-trash3-fill text-danger px-1"
         @click="$emit('delete', itemId)"
@@ -49,7 +46,7 @@ async function emitCheckBoxEvent (itemId, isItemCompleted) {
           type="checkbox"
           aria-label="Checkbox for following text input"
           :checked="isItemCompleted"
-          v-model="isItemCompleted"         
+          v-model="isItemCompleted"
           @change="emitCheckBoxEvent(itemId, isItemCompleted)"
         />
       </div>
@@ -57,10 +54,11 @@ async function emitCheckBoxEvent (itemId, isItemCompleted) {
         id="item-text-input"
         :class="{ 'text-decoration-line-through': isItemCompleted }"
         v-model="itemText"
-        @change="$emit( 'inputChange', itemId, itemText)"
+        @change="$emit('inputChange', itemId, itemText)"
         type="text"
         class="form-control"
         aria-label="Text input with checkbox"
+        autocomplete="off"
       />
     </div>
   </div>

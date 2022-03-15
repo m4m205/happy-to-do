@@ -1,26 +1,27 @@
 <script setup>
-import { ref, onMounted } from "vue"
-import router from "@/router"
-import NiveaubepalingAPI from "@/services/niveaubepalingAPI.js"
-import ItemComponent from "@/components/ItemComponent.vue"
+import { ref, onMounted } from "vue";
+import router from "@/router";
+import NiveaubepalingAPI from "@/services/niveaubepalingAPI.js";
+import ItemComponent from "@/components/ItemComponent.vue";
 
-const listsData = ref([])
-const itemsData = ref([])
-const selectedListId = ref(null)
-const itemToBeDeletedId = ref(null)
-const listToBeDeletedId = ref(null)
+const listsData = ref([]);
+const itemsData = ref([]);
+const selectedListId = ref(null);
+const itemToBeDeletedId = ref(null);
+const listToBeDeletedId = ref(null);
 let spinner = {};
 
 onMounted(() => {
+  // eslint-disable-next-line no-undef
   spinner = new bootstrap.Modal(document.getElementById("spinner-overlay"), {
     keyboard: false,
   });
-  const deleteItemModal = document.getElementById("delete-item-overlay")
-  const deleteListModal = document.getElementById("delete-list-overlay")
-  const cancelDeleteItemBtn = document.getElementById("cancel-delete-item")
-  const cancelDeleteListBtn = document.getElementById("cancel-delete-list")
-  const newItemInput = document.getElementById("new-item-input")
-  const newListInput = document.getElementById("new-list-input")
+  const deleteItemModal = document.getElementById("delete-item-overlay");
+  const deleteListModal = document.getElementById("delete-list-overlay");
+  const cancelDeleteItemBtn = document.getElementById("cancel-delete-item");
+  const cancelDeleteListBtn = document.getElementById("cancel-delete-list");
+  const newItemInput = document.getElementById("new-item-input");
+  const newListInput = document.getElementById("new-list-input");
 
   newItemInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
@@ -42,37 +43,39 @@ onMounted(() => {
 
   deleteListModal.addEventListener("shown.bs.modal", function () {
     cancelDeleteListBtn.focus();
-  });  
-  getLists()
+  });
+  getLists();
 });
 
-function getLists (selectedId) {
+function getLists(selectedId) {
   spinner.show();
   NiveaubepalingAPI.getLists()
     .then((res) => {
       res.json().then((resList) => {
-        listsData.value = resList.data
-        selectedId ? getListItems(selectedId) : getListItems(resList.data[0].id)
+        listsData.value = resList.data;
+        selectedId
+          ? getListItems(selectedId)
+          : getListItems(resList.data[0].id);
         setTimeout(() => {
           spinner.hide();
         }, 500);
-      })
+      });
     })
-    .catch(() => router.push({ name: "error" }))
+    .catch(() => router.push({ name: "error" }));
 }
 
-function getListItems (id) {
+function getListItems(id) {
   NiveaubepalingAPI.getItems(id)
     .then((res) => {
       res.json().then((resItems) => {
-        selectedListId.value = id
+        selectedListId.value = id;
         itemsData.value = resItems.data.items;
       });
     })
-    .catch(() => router.push({ name: "error" }))
-};
+    .catch(() => router.push({ name: "error" }));
+}
 
-function addNewItem (item) {
+function addNewItem(item) {
   const newItem = {
     name: item.trim(),
   };
@@ -81,14 +84,14 @@ function addNewItem (item) {
     res
       .json()
       .then(() => {
-        document.getElementById("new-item-input").value = ""
+        document.getElementById("new-item-input").value = "";
         getListItems(selectedListId.value);
       })
-      .catch(() => router.push({ name: "error" }))
+      .catch(() => router.push({ name: "error" }));
   });
 }
 
-function addNewList (list) {
+function addNewList(list) {
   const newList = {
     name: list.trim(),
   };
@@ -97,37 +100,33 @@ function addNewList (list) {
     res
       .json()
       .then((res) => {
-        document.getElementById("new-list-input").value = ""
+        document.getElementById("new-list-input").value = "";
         getLists(res.data.id);
       })
-      .catch(() => router.push({ name: "error" }))
+      .catch(() => router.push({ name: "error" }));
   });
 }
 
-function prepareUpdateItemCompleted (id, newValue) {
+function prepareUpdateItemCompleted(id, newValue) {
   const updatedItem = {
     completed: newValue,
   };
-  updateItem (id, updatedItem)
+  updateItem(id, updatedItem);
 }
 
-function prepareUpdateItemText (id, newValue) {
+function prepareUpdateItemText(id, newValue) {
   const updatedItem = {
     name: newValue,
-  }
-  updateItem (id, updatedItem)
+  };
+  updateItem(id, updatedItem);
 }
 
 function updateItem(id, object) {
-  NiveaubepalingAPI.updateItem(
-    selectedListId.value,
-    id,
-    object
-  ).then((res) => {
+  NiveaubepalingAPI.updateItem(selectedListId.value, id, object).then((res) => {
     res
       .json()
       .then(() => getListItems(selectedListId.value))
-      .catch(() => router.push({ name: "error" }))
+      .catch(() => router.push({ name: "error" }));
   });
 }
 
@@ -144,10 +143,10 @@ function deleteItem() {
     res
       .json()
       .then(() => {
-        itemToBeDeletedId.value = null
-        getListItems(selectedListId.value)
+        itemToBeDeletedId.value = null;
+        getListItems(selectedListId.value);
       })
-      .catch(() => router.push({ name: "error" }))
+      .catch(() => router.push({ name: "error" }));
   });
 }
 
@@ -157,13 +156,12 @@ function prepareDeleteList(payload) {
 
 function deleteList() {
   if (listToBeDeletedId.value === null) return;
-  NiveaubepalingAPI.deleteList(
-    listToBeDeletedId.value
-  ).then(() => {
-    listToBeDeletedId.value = null
-    getLists()
-  }
-  ).catch(() => router.push({ name: "error" }))
+  NiveaubepalingAPI.deleteList(listToBeDeletedId.value)
+    .then(() => {
+      listToBeDeletedId.value = null;
+      getLists();
+    })
+    .catch(() => router.push({ name: "error" }));
 }
 </script>
 
@@ -268,13 +266,16 @@ function deleteList() {
             type="text"
             class="form-control"
             placeholder="create list"
+            autocomplete="off"
           />
         </div>
         <div
           v-for="list in listsData"
           :key="list.id"
           @click="getListItems(list.id)"
-          :class="{ 'border border-primary border-2': selectedListId === list.id }"
+          :class="{
+            'border border-primary border-2': selectedListId === list.id,
+          }"
           class="card d-flex justify-content-center text-center p-2 mb-3 list-card"
         >
           <div class="nav justify-content-end list-header">
@@ -288,7 +289,7 @@ function deleteList() {
           </div>
 
           <div class="input-group">
-          <p class="form-control mb-0">{{ list.name }}</p>
+            <p class="form-control mb-0">{{ list.name }}</p>
           </div>
         </div>
       </div>
@@ -299,6 +300,7 @@ function deleteList() {
             type="text"
             class="form-control"
             placeholder="Add to-do item here"
+            autocomplete="off"
           />
         </div>
         <div v-if="itemsData.length > 0">
