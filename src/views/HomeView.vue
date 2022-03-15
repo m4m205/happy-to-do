@@ -108,8 +108,6 @@ function addNewList(list) {
 }
 
 function prepareUpdateItemCompleted(newValue, id) {
-  console.log(id);
-  console.log(newValue);
   const updatedItem = {
     completed: newValue,
   };
@@ -310,7 +308,7 @@ function deleteList() {
             v-for="item in itemsData.slice().reverse()"
             :key="item.id"
             :input-value="item.name"
-            :item-completed="item.completed"
+            :is-item-completed="item.completed"
             @delete="() => prepareDeleteItem(item.id)"
             @inputValue="(e) => prepareUpdateItemText(e, item.id)"  
             @update:itemCompleted="(e) => prepareUpdateItemCompleted(e, item.id)"

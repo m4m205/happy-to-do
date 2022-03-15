@@ -1,35 +1,10 @@
-<script>
-import { onMounted } from "vue";
-import useModelWrapper from "../utils/modelWrapper"
+<script setup>
 
-// const emit = defineEmits(["delete", "completedChange", "inputChange"]);
+const props = defineProps({
+  inputValue: String,
+  isItemCompleted: Boolean,
+});
 
-// async function emitCheckBoxEvent(itemId, isItemCompleted) {
-//   // wait time needed here to insure isItemCompleted value was updated
-//   await nextTick();
-//   emit("completedChange", itemId, isItemCompleted);
-// }
-export default { 
-  props: { 
-    inputValue: String, 
-    itemCompleted: Boolean
-  },
-  setup(props, { emit }) { 
-    onMounted(() => {
-      const itemInput = document.getElementById("item-text-input");
-
-      itemInput.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-          itemInput.blur();
-        }
-      });
-    });
-    return { 
-      itemText: useModelWrapper(props, emit, 'inputValue'), 
-      isItemCompleted: useModelWrapper(props, emit, 'itemCompleted')
-    }
-  },
-}
 </script>
 
 <template>
@@ -58,10 +33,10 @@ export default {
       <input
         id="item-text-input"
         :class="{ 'text-decoration-line-through': isItemCompleted }"
-        :value="itemText"
+        :value="inputValue"
         @change="(e) => $emit('inputValue', e.target.value)"
         type="text"
-        class="form-control"
+        class="form-control item-text-input"
         aria-label="Text input with checkbox"
         autocomplete="off"
       />
