@@ -24,14 +24,14 @@ onMounted(() => {
   const newListInput = document.getElementById("new-list-input");
 
   newItemInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && event.target.value !== '') {
       event.preventDefault();
       addNewItem(event.target.value);
     }
   });
 
   newListInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && event.target.value !== '') {
       event.preventDefault();
       addNewList(event.target.value);
     }
