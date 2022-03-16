@@ -11,6 +11,8 @@ const itemToBeDeletedId = ref(null);
 const itemToBeDeletedName = ref("");
 const listToBeDeletedId = ref(null);
 const listToBeDeletedName = ref("");
+const auditTrailCreatedAt = ref("");
+const auditTrailUpdatedAt = ref("");
 let spinner = {};
 
 onMounted(() => {
@@ -21,6 +23,7 @@ onMounted(() => {
   });
   const deleteItemModal = document.getElementById("delete-item-overlay");
   const deleteListModal = document.getElementById("delete-list-overlay");
+  // const auditTrailModal = document.getElementById("audit-trail-overlay");
   const cancelDeleteItemBtn = document.getElementById("cancel-delete-item");
   const cancelDeleteListBtn = document.getElementById("cancel-delete-list");
   const newItemInput = document.getElementById("new-item-input");
@@ -170,6 +173,17 @@ function deleteList() {
     })
     .catch(() => router.push({ name: "error" }));
 }
+
+function setAuditTrail(createdAt, updatedAt) {
+  // the API response doesn't have timezone so we can not convert the time to local time
+  auditTrailCreatedAt.value = createdAt.substring(0, createdAt.indexOf("."));
+  auditTrailUpdatedAt.value = updatedAt.substring(0, updatedAt.indexOf("."));
+}
+
+function resetAuditTrail() {
+  auditTrailCreatedAt.value = "";
+  auditTrailUpdatedAt.value = "";
+}
 </script>
 
 <template>
@@ -269,6 +283,36 @@ function deleteList() {
         </div>
       </div>
     </div>
+
+    <div
+      id="audit-trail-overlay"
+      class="modal fade"
+      tabindex="-1"
+      aria-labelledby="auditTrailModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="auditTrailModalLabel">
+              Audit trail details
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              @click="resetAuditTrail"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Created at: {{ auditTrailCreatedAt }}</p>
+            <p>Updated at: {{ auditTrailUpdatedAt }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="row justify-content-between g-3">
       <div class="col-12 col-md-3 p-3 gx-2 bg-light shadow">
         <div class="input-group-text shadow-sm mb-3">
@@ -291,12 +335,11 @@ function deleteList() {
         >
           <div class="nav justify-content-end list-header">
             <i
-              class="bi bi-trash3-fill text-danger px-1"
+              class="bi bi-trash3-fill text-danger px-2"
               @click.stop="prepareDeleteList(list.id, list.name)"
               data-bs-toggle="modal"
               data-bs-target="#delete-list-overlay"
             ></i>
-            <i class="bi bi-info-circle text-info px-1"></i>
           </div>
 
           <div class="input-group">
@@ -320,10 +363,14 @@ function deleteList() {
             :key="item.id"
             :input-value="item.name"
             :is-item-completed="item.completed"
+            :item="item"
             @delete="() => prepareDeleteItem(item.id, item.name)"
             @inputValue="(e) => prepareUpdateItemText(e, item.id)"
             @update:itemCompleted="
               (e) => prepareUpdateItemCompleted(e, item.id)
+            "
+            @showAuditTrail="
+              () => setAuditTrail(item.created_at, item.updated_at)
             "
           ></ItemComponent>
         </div>
@@ -340,6 +387,6 @@ function deleteList() {
   cursor: pointer;
 }
 .list-header {
-  height: 1.5rem;
+  height: 2rem;
 }
 </style>
