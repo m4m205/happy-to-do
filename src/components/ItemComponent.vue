@@ -1,10 +1,10 @@
 <script setup>
-
+// ESlint role not updaed with new sintax of Vue
+// eslint-disable-next-line no-unused-vars
 const props = defineProps({
   inputValue: String,
   isItemCompleted: Boolean,
 });
-
 </script>
 
 <template>
@@ -34,7 +34,11 @@ const props = defineProps({
         id="item-text-input"
         :class="{ 'text-decoration-line-through': isItemCompleted }"
         :value="inputValue"
-        @change="(e) => { $emit('inputValue', e.target.value), $refs.textInput.blur()}"
+        @change="
+          (e) => {
+            $emit('inputValue', e.target.value), $refs.textInput.blur();
+          }
+        "
         ref="textInput"
         type="text"
         class="form-control item-text-input"

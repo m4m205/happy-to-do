@@ -4,9 +4,7 @@ import { RouterLink, RouterView } from "vue-router";
 
 <template>
   <div class="d-flex flex-column min-vh-100">
-    <nav
-      class="navbar navbar-expand-md navbar-light navbar-to-do"
-    >
+    <nav class="navbar navbar-expand-md navbar-light navbar-to-do">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Happy to-do</a>
         <button

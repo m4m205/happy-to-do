@@ -8,10 +8,13 @@ const listsData = ref([]);
 const itemsData = ref([]);
 const selectedListId = ref(null);
 const itemToBeDeletedId = ref(null);
+const itemToBeDeletedName = ref("");
 const listToBeDeletedId = ref(null);
+const listToBeDeletedName = ref("");
 let spinner = {};
 
 onMounted(() => {
+  // we are using bootstrap CDN way
   // eslint-disable-next-line no-undef
   spinner = new bootstrap.Modal(document.getElementById("spinner-overlay"), {
     keyboard: false,
@@ -24,14 +27,14 @@ onMounted(() => {
   const newListInput = document.getElementById("new-list-input");
 
   newItemInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter" && event.target.value !== '') {
+    if (event.key === "Enter" && event.target.value !== "") {
       event.preventDefault();
       addNewItem(event.target.value);
     }
   });
 
   newListInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter" && event.target.value !== '') {
+    if (event.key === "Enter" && event.target.value !== "") {
       event.preventDefault();
       addNewList(event.target.value);
     }
@@ -130,8 +133,9 @@ function updateItem(id, object) {
   });
 }
 
-function prepareDeleteItem(id) {
+function prepareDeleteItem(id, name) {
   itemToBeDeletedId.value = id;
+  itemToBeDeletedName.value = name;
 }
 
 function deleteItem() {
@@ -144,14 +148,16 @@ function deleteItem() {
       .json()
       .then(() => {
         itemToBeDeletedId.value = null;
+        itemToBeDeletedName.value = "";
         getListItems(selectedListId.value);
       })
       .catch(() => router.push({ name: "error" }));
   });
 }
 
-function prepareDeleteList(payload) {
-  listToBeDeletedId.value = payload;
+function prepareDeleteList(id, name) {
+  listToBeDeletedId.value = id;
+  listToBeDeletedName.value = name;
 }
 
 function deleteList() {
@@ -159,6 +165,7 @@ function deleteList() {
   NiveaubepalingAPI.deleteList(listToBeDeletedId.value)
     .then(() => {
       listToBeDeletedId.value = null;
+      listToBeDeletedName.value = null;
       getLists();
     })
     .catch(() => router.push({ name: "error" }));
@@ -195,7 +202,7 @@ function deleteList() {
             <h5 class="modal-title" id="confirmModalLabel">Confirm</h5>
           </div>
           <div class="modal-body">
-            Are you sure you want to delete this item?
+            Are you sure you want to delete ( {{ itemToBeDeletedName }} ) item?
           </div>
           <div class="modal-footer">
             <button
@@ -203,7 +210,9 @@ function deleteList() {
               type="button"
               class="btn btn-primary"
               data-bs-dismiss="modal"
-              @click="() => (itemToBeDeletedId = null)"
+              @click="
+                () => ((itemToBeDeletedId = null), (itemToBeDeletedName = ''))
+              "
             >
               No
             </button>
@@ -233,7 +242,7 @@ function deleteList() {
             <h5 class="modal-title" id="confirmModalLabel">Confirm</h5>
           </div>
           <div class="modal-body">
-            Are you sure you want to delete this list?
+            Are you sure you want to delete ( {{ listToBeDeletedName }} ) list?
           </div>
           <div class="modal-footer">
             <button
@@ -241,7 +250,9 @@ function deleteList() {
               type="button"
               class="btn btn-primary"
               data-bs-dismiss="modal"
-              @click="() => (listToBeDeletedId = null)"
+              @click="
+                () => ((listToBeDeletedId = null), (listToBeDeletedName = ''))
+              "
             >
               No
             </button>
@@ -281,7 +292,7 @@ function deleteList() {
           <div class="nav justify-content-end list-header">
             <i
               class="bi bi-trash3-fill text-danger px-1"
-              @click.stop="prepareDeleteList(list.id)"
+              @click.stop="prepareDeleteList(list.id, list.name)"
               data-bs-toggle="modal"
               data-bs-target="#delete-list-overlay"
             ></i>
@@ -309,9 +320,11 @@ function deleteList() {
             :key="item.id"
             :input-value="item.name"
             :is-item-completed="item.completed"
-            @delete="() => prepareDeleteItem(item.id)"
-            @inputValue="(e) => prepareUpdateItemText(e, item.id)"  
-            @update:itemCompleted="(e) => prepareUpdateItemCompleted(e, item.id)"
+            @delete="() => prepareDeleteItem(item.id, item.name)"
+            @inputValue="(e) => prepareUpdateItemText(e, item.id)"
+            @update:itemCompleted="
+              (e) => prepareUpdateItemCompleted(e, item.id)
+            "
           ></ItemComponent>
         </div>
         <div v-else class="text-center">
