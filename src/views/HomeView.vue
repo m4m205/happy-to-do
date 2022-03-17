@@ -360,8 +360,6 @@ function resetAuditTrail() {
           <ItemComponent
             v-for="item in itemsData.slice().reverse()"
             :key="item.id"
-            :input-value="item.name"
-            :is-item-completed="item.completed"
             :item="item"
             @delete="() => prepareDeleteItem(item.id, item.name)"
             @inputValue="(e) => prepareUpdateItemText(e, item.id)"
