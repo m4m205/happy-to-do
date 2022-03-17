@@ -23,7 +23,6 @@ onMounted(() => {
   });
   const deleteItemModal = document.getElementById("delete-item-overlay");
   const deleteListModal = document.getElementById("delete-list-overlay");
-  // const auditTrailModal = document.getElementById("audit-trail-overlay");
   const cancelDeleteItemBtn = document.getElementById("cancel-delete-item");
   const cancelDeleteListBtn = document.getElementById("cancel-delete-list");
   const newItemInput = document.getElementById("new-item-input");
