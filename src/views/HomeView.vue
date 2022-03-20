@@ -3,7 +3,6 @@ import { ref, onMounted } from "vue";
 import router from "@/router";
 import NiveaubepalingAPI from "@/services/niveaubepalingAPI.js";
 import ItemComponent from "@/components/ItemComponent.vue";
-import * as bootstrap from "bootstrap";
 
 const listsData = ref([]);
 const itemsData = ref([]);
@@ -14,12 +13,13 @@ const listToBeDeletedId = ref(null);
 const listToBeDeletedName = ref("");
 const auditTrailCreatedAt = ref("");
 const auditTrailUpdatedAt = ref("");
-let spinner = {};
 
 onMounted(() => {
-  spinner = new bootstrap.Modal(document.getElementById("spinner-overlay"), {
-    keyboard: false,
-  });
+  getLists();
+});
+
+window.onload = () => {
+  // needed because unit test not finding bootstrap elements
   const deleteItemModal = document.getElementById("delete-item-overlay");
   const deleteListModal = document.getElementById("delete-list-overlay");
   const cancelDeleteItemBtn = document.getElementById("cancel-delete-item");
@@ -48,11 +48,9 @@ onMounted(() => {
   deleteListModal.addEventListener("shown.bs.modal", function () {
     cancelDeleteListBtn.focus();
   });
-  getLists();
-});
+};
 
 function getLists(selectedId) {
-  spinner.show();
   NiveaubepalingAPI.getLists()
     .then((res) => {
       res.json().then((resList) => {
@@ -60,9 +58,6 @@ function getLists(selectedId) {
         selectedId
           ? getListItems(selectedId)
           : getListItems(resList.data[0].id);
-        setTimeout(() => {
-          spinner.hide();
-        }, 500);
       });
     })
     .catch(() => router.push({ name: "error" }));
@@ -186,21 +181,6 @@ function resetAuditTrail() {
 
 <template>
   <main class="container shadow-sm p-5">
-    <div
-      id="spinner-overlay"
-      class="modal"
-      tabindex="-1"
-      aria-labelledby="spinnerModalLabel"
-      aria-hidden="true"
-    >
-      <div
-        class="d-flex align-items-center justify-content-center h-100 modal-dialog"
-      >
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden" id="spinnerModalLabel">Loading...</span>
-        </div>
-      </div>
-    </div>
     <div
       id="delete-item-overlay"
       class="modal fade"

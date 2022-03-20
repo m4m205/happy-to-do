@@ -1,33 +1,17 @@
-import { afterEach, describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import router from "@/router";
 import HomeView from "../HomeView.vue";
 import NiveaubepalingAPI from "@/services/niveaubepalingAPI.js";
 
-describe("HomeView elements", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it("should call getLists method on first load", async () => {
-    // const APIspy = vi.spyOn(NiveaubepalingAPI, 'getLists').mockRejectedValue({})
-    // const wrapper = mount(HomeView)
-    // const spy = vi.spyOn(wrapper.vm, 'getLists')
-    // await flushPromises()
-    // expect(spy).toHaveBeenCalledTimes(1)
-  });
-});
-// const listInput = wrapper.find('#new-list-input')
-
 describe("getLists method", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
   it("should call NiveaubepalingAPI.getLists on first", () => {
     const spy = vi.spyOn(NiveaubepalingAPI, "getLists").mockRejectedValue({});
     mount(HomeView);
-
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -40,7 +24,7 @@ describe("getLists method", () => {
     expect(routerSpy).toHaveBeenCalledWith({ name: "error" });
   });
 
-  it("should set response to listData when API send a resolve value", async () => {
+  it("should set response to listData when API send a resolved value", async () => {
     const listsDataResponse = {
       data: [
         {
@@ -63,7 +47,40 @@ describe("getLists method", () => {
     expect(wrapper.vm.listsData).toEqual([{ id: 123, name: "Test" }]);
   });
 
-  it("should call getListItems with the passed argument when API send a resolve value", async () => {
+  it.todo(
+    "should call getListItems with the passed argument when API send a resolved value",
+    async () => {
+      const listsDataResponse = {
+        data: [
+          {
+            id: 123,
+            name: "Test",
+          },
+        ],
+      };
+      const itemsDataResponse = {
+        data: {
+          items: [],
+        },
+      };
+      vi.spyOn(NiveaubepalingAPI, "getItems").mockResolvedValue({
+        json: () =>
+          new Promise((res) => {
+            res(itemsDataResponse);
+          }),
+      });
+      vi.spyOn(NiveaubepalingAPI, "getLists").mockResolvedValue({
+        json: () =>
+          new Promise((res) => {
+            res(listsDataResponse);
+          }),
+      });
+      const wrapper = mount(HomeView);
+      const spy = vi.spyOn(wrapper.vm, "getListItems");
+      await wrapper.vm.getLists(321);
+      await flushPromises();
 
-  });
+      expect(spy).toHaveBeenCalledWith(321);
+    }
+  );
 });
