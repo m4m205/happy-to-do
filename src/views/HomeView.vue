@@ -18,9 +18,9 @@ let spinner = {};
 onMounted(() => {
   // we are using bootstrap CDN way
   // eslint-disable-next-line no-undef
-  spinner = new bootstrap.Modal(document.getElementById("spinner-overlay"), {
-    keyboard: false,
-  });
+  // spinner = new bootstrap.Modal(document.getElementById("spinner-overlay"), {
+  //   keyboard: false,
+  // });
   const deleteItemModal = document.getElementById("delete-item-overlay");
   const deleteListModal = document.getElementById("delete-list-overlay");
   const cancelDeleteItemBtn = document.getElementById("cancel-delete-item");
@@ -28,32 +28,32 @@ onMounted(() => {
   const newItemInput = document.getElementById("new-item-input");
   const newListInput = document.getElementById("new-list-input");
 
-  newItemInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter" && event.target.value !== "") {
-      event.preventDefault();
-      addNewItem(event.target.value);
-    }
-  });
+  // newItemInput.addEventListener("keydown", function (event) {
+  //   if (event.key === "Enter" && event.target.value !== "") {
+  //     event.preventDefault();
+  //     addNewItem(event.target.value);
+  //   }
+  // });
 
-  newListInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter" && event.target.value !== "") {
-      event.preventDefault();
-      addNewList(event.target.value);
-    }
-  });
+  // newListInput.addEventListener("keydown", function (event) {
+  //   if (event.key === "Enter" && event.target.value !== "") {
+  //     event.preventDefault();
+  //     addNewList(event.target.value);
+  //   }
+  // });
 
-  deleteItemModal.addEventListener("shown.bs.modal", function () {
-    cancelDeleteItemBtn.focus();
-  });
+  // deleteItemModal.addEventListener("shown.bs.modal", function () {
+  //   cancelDeleteItemBtn.focus();
+  // });
 
-  deleteListModal.addEventListener("shown.bs.modal", function () {
-    cancelDeleteListBtn.focus();
-  });
+  // deleteListModal.addEventListener("shown.bs.modal", function () {
+  //   cancelDeleteListBtn.focus();
+  // });
   getLists();
 });
 
 function getLists(selectedId) {
-  spinner.show();
+  // spinner.show();
   NiveaubepalingAPI.getLists()
     .then((res) => {
       res.json().then((resList) => {
@@ -62,7 +62,7 @@ function getLists(selectedId) {
           ? getListItems(selectedId)
           : getListItems(resList.data[0].id);
         setTimeout(() => {
-          spinner.hide();
+          // spinner.hide();
         }, 500);
       });
     })
