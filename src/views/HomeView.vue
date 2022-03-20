@@ -61,9 +61,9 @@ function getLists(selectedId) {
         selectedId
           ? getListItems(selectedId)
           : getListItems(resList.data[0].id);
-        setTimeout(() => {
-          // spinner.hide();
-        }, 500);
+        // setTimeout(() => {
+        //   spinner.hide();
+        // }, 500);
       });
     })
     .catch(() => router.push({ name: "error" }));

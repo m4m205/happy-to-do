@@ -32,11 +32,57 @@ describe("getLists method", () => {
         expect(spy).toHaveBeenCalledTimes(1)
     })
 
-    it("rout to error page if API send a rejected value", async () => {
+    it("should call router when API send a rejected value", async () => {
         const spy = vi.spyOn(NiveaubepalingAPI, 'getLists').mockRejectedValue({})
         const routerSpy = vi.spyOn(router, 'push')
         const wrapper = mount(HomeView)
-          await flushPromises()
-          expect(routerSpy).toHaveBeenCalledTimes(1)
+        await flushPromises()
+
+        expect(routerSpy).toHaveBeenCalledWith({ name: "error" })
+    })
+
+    it("should set response to listData when API send a resolve value", async () => {
+        const listsDataResponse = {
+            data: [{
+                "id":123,
+                "name":"Test"
+            }]
+        }
+        const spyGetItems = vi.spyOn(NiveaubepalingAPI, 'getItems').mockRejectedValue({})
+        const spyGetLists = vi.spyOn(NiveaubepalingAPI, 'getLists').mockResolvedValue({
+            json: () => new Promise((res) => {
+                res(listsDataResponse)
+            })
+        })
+        const wrapper = mount(HomeView)
+        expect(wrapper.vm.listsData).toEqual([])
+        await flushPromises()
+
+        expect(wrapper.vm.listsData).toEqual([{ id:123, name:"Test" }])
+    })
+
+    it("should call getListItems with the passed argument when API send a resolve value", async () => {
+        // const listsDataResponse = {
+        //     data: [{
+        //         "id":123,
+        //         "name":"Test"
+        //     }]
+        // }
+        // // vi.useFakeTimers()
+        // const spyGetItems = vi.spyOn(NiveaubepalingAPI, 'getItems').mockResolvedValue({})
+        // const spyGetLists = vi.spyOn(NiveaubepalingAPI, 'getLists').mockResolvedValue({
+        //     json: () => new Promise((res) => {
+        //         res(listsDataResponse)
+        //     })
+        // })
+        // const wrapper = mount(HomeView)
+        // // await flushPromises()
+        // // vi.runAllTicks()
+        // await flushPromises()
+        // const spy = vi.spyOn(wrapper.vm, 'getListItems').mockImplementation(() => {})
+        // wrapper.vm.getLists(321)
+        // await flushPromises()
+
+        // await expect(spy).toHaveBeenCalled()
     })
 })
