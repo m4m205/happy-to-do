@@ -1,5 +1,4 @@
 export default class NiveaubepalingAPI {
-
   static getFetchOptions(method, passedBody) {
     const fetchOptions = {
       method: method,
@@ -8,60 +7,57 @@ export default class NiveaubepalingAPI {
         Origin: "*",
         "Content-type": "application/json",
       },
-      body: passedBody ? JSON.stringify(passedBody) : undefined
+      body: passedBody ? JSON.stringify(passedBody) : undefined,
     };
-    return fetchOptions
+    return fetchOptions;
   }
 
   static getLists() {
-    return fetch(`https://todo-api.niveaubepaling.nl/list`,
-    this.getFetchOptions('GET')
-    ).then(
-      (res) => (!res.ok ? Promise.reject(res) : res)
-    );
+    return fetch(
+      `https://todo-api.niveaubepaling.nl/list`,
+      this.getFetchOptions("GET")
+    ).then((res) => (!res.ok ? Promise.reject(res) : res));
   }
 
   static getItems(id) {
     return fetch(
       `https://todo-api.niveaubepaling.nl/list/${id}`,
-      this.getFetchOptions('GET')
+      this.getFetchOptions("GET")
     ).then((res) => (!res.ok ? Promise.reject(res) : res));
   }
 
   static addItem(id, payload) {
     return fetch(
       `https://todo-api.niveaubepaling.nl/list/${id}`,
-      this.getFetchOptions('POST', payload)
+      this.getFetchOptions("POST", payload)
     ).then((res) => (!res.ok ? Promise.reject(res) : res));
   }
 
   static addList(payload) {
     return fetch(
       `https://todo-api.niveaubepaling.nl/list`,
-      this.getFetchOptions('POST', payload)
-      ).then(
-      (res) => (!res.ok ? Promise.reject(res) : res)
-    );
+      this.getFetchOptions("POST", payload)
+    ).then((res) => (!res.ok ? Promise.reject(res) : res));
   }
 
   static updateItem(listId, itemId, payload) {
     return fetch(
       `https://todo-api.niveaubepaling.nl/list/${listId}/${itemId}`,
-      this.getFetchOptions('؛ِلإ}أ', payload)
+      this.getFetchOptions("PATCH", payload)
     ).then((res) => (!res.ok ? Promise.reject(res) : res));
   }
 
   static deleteItem(listId, itemId) {
     return fetch(
       `https://todo-api.niveaubepaling.nl/list/${listId}/${itemId}`,
-      this.getFetchOptions('DELETE')
+      this.getFetchOptions("DELETE")
     ).then((res) => (!res.ok ? Promise.reject(res) : res));
   }
 
   static deleteList(listId) {
     return fetch(
       `https://todo-api.niveaubepaling.nl/list/${listId}`,
-      this.getFetchOptions('DELETE')
+      this.getFetchOptions("DELETE")
     ).then((res) => (!res.ok ? Promise.reject(res) : res));
   }
 }
