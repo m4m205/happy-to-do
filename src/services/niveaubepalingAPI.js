@@ -1,6 +1,6 @@
 export default class NiveaubepalingAPI {
   static getBaseURL() {
-    return 'https://todo-api.niveaubepaling.nl/'
+    return 'https://todo-api.niveaubepaling.nl/list'
   }
 
   static getFetchOptions(method, passedBody) {
@@ -18,7 +18,7 @@ export default class NiveaubepalingAPI {
 
   static async getLists() {
     const res = await fetch(
-      `${this.getBaseURL()}list`,
+      this.getBaseURL(),
       this.getFetchOptions("GET")
     );
     return (!res.ok ? Promise.reject(res) : res);
@@ -26,7 +26,7 @@ export default class NiveaubepalingAPI {
 
   static async getItems(id) {
     const res = await fetch(
-      `${this.getBaseURL()}list/${id}`,
+      `${this.getBaseURL()}/${id}`,
       this.getFetchOptions("GET")
     );
     return (!res.ok ? Promise.reject(res) : res);
@@ -34,7 +34,7 @@ export default class NiveaubepalingAPI {
 
   static async addItem(id, payload) {
     const res = await fetch(
-      `${this.getBaseURL()}list/${id}`,
+      `${this.getBaseURL()}/${id}`,
       this.getFetchOptions("POST", payload)
     );
     return (!res.ok ? Promise.reject(res) : res);
@@ -42,7 +42,7 @@ export default class NiveaubepalingAPI {
 
   static async addList(payload) {
     const res = await fetch(
-      `${this.getBaseURL()}list`,
+      this.getBaseURL(),
       this.getFetchOptions("POST", payload)
     );
     return (!res.ok ? Promise.reject(res) : res);
@@ -50,7 +50,7 @@ export default class NiveaubepalingAPI {
 
   static async updateItem(listId, itemId, payload) {
     const res = await fetch(
-      `${this.getBaseURL()}list/${listId}/${itemId}`,
+      `${this.getBaseURL()}/${listId}/${itemId}`,
       this.getFetchOptions("PATCH", payload)
     );
     return (!res.ok ? Promise.reject(res) : res);
@@ -58,7 +58,7 @@ export default class NiveaubepalingAPI {
 
   static async deleteItem(listId, itemId) {
     const res = await fetch(
-      `${this.getBaseURL()}list/${listId}/${itemId}`,
+      `${this.getBaseURL()}/${listId}/${itemId}`,
       this.getFetchOptions("DELETE")
     );
     return (!res.ok ? Promise.reject(res) : res);
@@ -66,7 +66,7 @@ export default class NiveaubepalingAPI {
 
   static async deleteList(listId) {
     const res = await fetch(
-      `${this.getBaseURL()}list/${listId}`,
+      `${this.getBaseURL()}/${listId}`,
       this.getFetchOptions("DELETE")
     );
     return (!res.ok ? Promise.reject(res) : res);
