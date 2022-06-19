@@ -9,7 +9,7 @@ describe("getLists method", () => {
     vi.clearAllMocks();
   });
 
-  it("should call NiveaubepalingAPI.getLists on first", () => {
+  it("should call NiveaubepalingAPI.getLists", () => {
     const spy = vi.spyOn(NiveaubepalingAPI, "getLists").mockRejectedValue({});
     mount(HomeView);
     expect(spy).toHaveBeenCalledTimes(1);
@@ -47,8 +47,7 @@ describe("getLists method", () => {
     expect(wrapper.vm.listsData).toEqual([{ id: 123, name: "Test" }]);
   });
 
-  it.todo(
-    "should call getListItems with the passed argument when API send a resolved value",
+  it("should call getListItems with the passed argument when API send a resolved value",
     async () => {
       const listsDataResponse = {
         data: [
@@ -76,7 +75,7 @@ describe("getLists method", () => {
           }),
       });
       const wrapper = mount(HomeView);
-      const spy = vi.spyOn(wrapper.vm, "getListItems");
+      const spy = vi.spyOn(wrapper.vm.obj, "getListItems");
       await wrapper.vm.getLists(321);
       await flushPromises();
 

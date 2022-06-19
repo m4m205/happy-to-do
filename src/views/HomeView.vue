@@ -56,8 +56,8 @@ function getLists(selectedId) {
       res.json().then((resList) => {
         listsData.value = resList.data;
         selectedId
-          ? getListItems(selectedId)
-          : getListItems(resList.data[0].id);
+          ? obj.getListItems(selectedId)
+          : obj.getListItems(resList.data[0].id);
       });
     })
     .catch(() => router.push({ name: "error" }));
@@ -84,7 +84,7 @@ function addNewItem(item) {
       .json()
       .then(() => {
         document.getElementById("new-item-input").value = "";
-        getListItems(selectedListId.value);
+        obj.getListItems(selectedListId.value);
       })
       .catch(() => router.push({ name: "error" }));
   });
@@ -124,7 +124,7 @@ function updateItem(id, object) {
   NiveaubepalingAPI.updateItem(selectedListId.value, id, object).then((res) => {
     res
       .json()
-      .then(() => getListItems(selectedListId.value))
+      .then(() => obj.getListItems(selectedListId.value))
       .catch(() => router.push({ name: "error" }));
   });
 }
@@ -145,7 +145,7 @@ function deleteItem() {
       .then(() => {
         itemToBeDeletedId.value = null;
         itemToBeDeletedName.value = "";
-        getListItems(selectedListId.value);
+        obj.getListItems(selectedListId.value);
       })
       .catch(() => router.push({ name: "error" }));
   });
@@ -176,6 +176,10 @@ function setAuditTrail(createdAt, updatedAt) {
 function resetAuditTrail() {
   auditTrailCreatedAt.value = "";
   auditTrailUpdatedAt.value = "";
+}
+
+const obj = {
+  getListItems,
 }
 </script>
 
